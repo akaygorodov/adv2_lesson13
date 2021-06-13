@@ -23,12 +23,13 @@ public class Main {
         Optional.ofNullable(person)
 
                 .ifPresent(personOptional -> {
-                    if (personOptional.getDriverLicence().isPresent()){
-                    if (Instant.now().compareTo(personOptional.getDriverLicence().get().getExpireDate()) > 0) {
-                        System.out.println("Date of license expired, no valid licenses");
-                    } else
-                        System.out.println("Active categories: " + Arrays.toString(personOptional.getDriverLicence().get().getCategories()));
-                    }}
+                            if (personOptional.getDriverLicence().isPresent()) {
+                                if (Instant.now().compareTo(personOptional.getDriverLicence().get().getExpireDate()) > 0) {
+                                    System.out.println("Date of license expired, no valid licenses");
+                                } else
+                                    System.out.println("Active categories: " + Arrays.toString(personOptional.getDriverLicence().get().getCategories()));
+                            }
+                        }
                 );
     }
 }
