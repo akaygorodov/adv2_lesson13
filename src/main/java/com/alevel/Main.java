@@ -4,8 +4,14 @@ import com.alevel.model.DriverLicence;
 import com.alevel.model.Person;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * Вывести на экран открытые водительские категории у персоны,
+ * если срок водительского удостоверения не истек, в противном случае –
+ * выбросить ошибку о том, что нет действующих лицензий.
+ */
 public class Main {
 
     public static void main(String[] args) {
@@ -19,8 +25,38 @@ public class Main {
                                     .driverLicence(Optional.ofNullable(driverLicence))
                                     .build();
 
-        Optional.ofNullable(person)
-                // you code here
-        ;
+        try {
+            Optional
+                    .ofNullable(person)
+                    .ifPresent(Main::handlePerson);
+        } catch (NoValidLicenceException e) {
+            System.out.println(e.getMessage());
+        }
+
     }
+
+    private static void handlePerson(Person person) throws NoValidLicenceException {
+        Optional<DriverLicence> licence = person.getDriverLicence();
+        licence.orElseThrow(NoValidLicenceException::new);
+
+        licence.ifPresent((lic) -> {
+            Instant expireDate = lic.getExpireDate();
+
+            if (expireDate.isBefore(Instant.now())) {
+                throw new NoValidLicenceException();
+            } else {
+                System.out.println("Allowed categories: " + Arrays.toString(lic.getCategories()));
+            }
+        });
+    }
+
+//    private static void checkLicences(DriverLicence licence) throws NoValidLicenceException {
+//        Instant expireDate = licence.getExpireDate();
+//
+//        if (expireDate.isBefore(Instant.now())) {
+//            throw new NoValidLicenceException();
+//        } else {
+//            System.out.println("Allowed categories: " + Arrays.toString(licence.getCategories()));
+//        }
+//    }
 }
