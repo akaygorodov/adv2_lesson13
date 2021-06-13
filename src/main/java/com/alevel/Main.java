@@ -23,11 +23,11 @@ public class Main {
 
         Optional.ofNullable(person).ifPresent(personOptional -> {
             //noinspection OptionalGetWithoutIsPresent
-            if (Optional.ofNullable(person.getDriverLicence().get().getExpireDate()).isPresent()){
-                    if (Instant.now().compareTo(person.getDriverLicence().get().getExpireDate()) > 0) {
+            if (Optional.ofNullable(personOptional.getDriverLicence().get().getExpireDate()).isPresent()){
+                    if (Instant.now().compareTo(personOptional.getDriverLicence().get().getExpireDate()) > 0) {
                         System.out.println("Date of license expired, no valid licenses");
                     } else
-                        System.out.println("Active categories: " + Arrays.toString(person.getDriverLicence().get().getCategories()));
+                        System.out.println("Active categories: " + Arrays.toString(personOptional.getDriverLicence().get().getCategories()));
                     }
                 });
     }
