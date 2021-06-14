@@ -49,14 +49,4 @@ public class Main {
             }
         });
     }
-
-//    private static void checkLicences(DriverLicence licence) throws NoValidLicenceException {
-//        Instant expireDate = licence.getExpireDate();
-//
-//        if (expireDate.isBefore(Instant.now())) {
-//            throw new NoValidLicenceException();
-//        } else {
-//            System.out.println("Allowed categories: " + Arrays.toString(licence.getCategories()));
-//        }
-//    }
 }
