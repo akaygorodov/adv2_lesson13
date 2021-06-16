@@ -3,6 +3,7 @@ package com.alevel.model;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.Instant;
 import java.util.Optional;
 
 @Data
@@ -14,4 +15,7 @@ public class Person {
     private String lastName;
     private Optional<DriverLicence> driverLicence;
 
+
+
 }
+
