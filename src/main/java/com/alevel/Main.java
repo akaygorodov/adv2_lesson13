@@ -21,14 +21,14 @@ public class Main {
                 .driverLicence(Optional.ofNullable(driverLicence))
                 .build();
 
-        Optional.ofNullable(person).ifPresent(p -> {
-            DriverLicence dl = p.getDriverLicence().orElseThrow(LicenseException::new);
-            if (dl.getExpireDate().isBefore(Instant.now())) { // .isBefore() possible NPE
-                throw new LicenseException();
-            }
-            System.out.println("Active categories: " + Arrays.toString(dl.getCategories()));
-
-        });
+        Optional.ofNullable(person)
+                .flatMap(Person::getDriverLicence)
+                .filter(dl -> Optional.ofNullable(dl.getExpireDate()).isPresent())
+                .filter(dl -> dl.getExpireDate().isAfter(Instant.now()))
+                .ifPresentOrElse(
+                        dl -> System.out.println("Active categories: " + Arrays.toString(dl.getCategories())),
+                        LicenseException::new
+                );
 
 
     }
