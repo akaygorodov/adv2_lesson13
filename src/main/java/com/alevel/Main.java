@@ -16,37 +16,41 @@ public class Main {
 
     public static void main(String[] args) {
         final DriverLicence driverLicence = DriverLicence.builder()
-                                                         .categories(new String[]{"A", "B", "C"})
-                                                         .expireDate(Instant.parse("2020-11-30T18:35:24.00Z"))
-                                                         .build();
+                .categories(new String[]{"A", "B", "C"})
+                .expireDate(Instant.parse("2023-11-30T18:35:24.00Z"))
+                .build();
         final Person person = Person.builder()
-                                    .firstName("John")
-                                    .lastName("Smith")
-                                    .driverLicence(Optional.ofNullable(driverLicence))
-                                    .build();
+                .firstName("John")
+                .lastName("Smith")
+                .driverLicence(Optional.ofNullable(driverLicence))
+                .build();
 
         try {
-            Optional
-                    .ofNullable(person)
-                    .ifPresent(Main::handlePerson);
+            Main.handlePerson(Optional.ofNullable(person));
         } catch (NoValidLicenceException e) {
             System.out.println(e.getMessage());
         }
 
     }
 
-    private static void handlePerson(Person person) throws NoValidLicenceException {
-        Optional<DriverLicence> licence = person.getDriverLicence();
-        licence.orElseThrow(NoValidLicenceException::new);
+    private static void handlePerson(Optional<Person> person) throws NoValidLicenceException {
+        person
+                .flatMap(Person::getDriverLicence)
+                .filter(Main::filterLicence)
+                .ifPresentOrElse(
+                        Main::outputCategories,
+                        () -> {
+                            throw new NoValidLicenceException();
+                        }
+                );
+    }
 
-        licence.ifPresent((lic) -> {
-            Instant expireDate = lic.getExpireDate();
+    private static boolean filterLicence(DriverLicence licence) {
+        return licence.getExpireDate().isAfter(Instant.now());
+    }
 
-            if (expireDate.isBefore(Instant.now())) {
-                throw new NoValidLicenceException();
-            } else {
-                System.out.println("Allowed categories: " + Arrays.toString(lic.getCategories()));
-            }
-        });
+    private static void outputCategories(DriverLicence licence) {
+        String output = Arrays.toString(licence.getCategories());
+        System.out.println("Allowed categories: " + output);
     }
 }
