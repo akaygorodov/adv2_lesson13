@@ -30,6 +30,7 @@ public class Main {
                 .flatMap(personOpt -> personOpt.getDriverLicence().stream())
                 .filter(expireDate -> Instant.now().isBefore(expireDate.getExpireDate()))
                 .collect(Collectors.toList());
+
         if (personOptional.isEmpty()) {
             throw new Exception("Date of license expired, no valid licenses");
         } else System.out.println(personOptional);
