@@ -1,7 +1,8 @@
-package com.alevel;
+package Project;
 
-import com.alevel.model.DriverLicence;
-import com.alevel.model.Person;
+import Project.model.DriverLicence;
+import Project.model.Person;
+
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Optional;
@@ -20,20 +21,16 @@ public class Main {
                 .driverLicence(Optional.ofNullable(driverLicence))
                 .build();
 
-        Instant LicenceTime = Optional.ofNullable(person.getDriverLicence())
-                .flatMap(Function.identity())
-                .map(DriverLicence::getExpireDate)
-                .orElseThrow(() -> new Exception("expireDate input Error"));
-        String[] Categories = Optional.ofNullable(person.getDriverLicence())
-                .flatMap(Function.identity())
+        Optional.ofNullable(person)
+                .flatMap(Person::getDriverLicence)
+                .filter(driverLicence1 -> Instant.now().isBefore(driverLicence1.getExpireDate()))
                 .map(DriverLicence::getCategories)
-                .orElseThrow(() -> new Exception("categories input Error"));
-
-        if (LicenceTime.isAfter(Instant.now())) {
-            System.out.println(Arrays.toString(Categories));
-
-        }else {
-            throw new Exception("No Active Licence");
-        }
+                .ifPresentOrElse(Categories -> System.out.println(Arrays.toString(Categories)), () -> {
+                    try {
+                        throw new Exception("No Active Licence");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 }
